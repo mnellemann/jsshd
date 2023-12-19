@@ -1,0 +1,13 @@
+FROM centos:centos8 AS build
+
+RUN yum -y install unzip zip rpm-build
+RUN sh -c "curl -s 'https://get.sdkman.io' | bash"
+RUN sh -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install java 17.0.2-zulu"
+
+COPY ./src /tmp/prj/src
+COPY ./gradle /tmp/prj/gradle
+COPY [ "gradlew", "build.gradle", "gradle.properties", "settings.gradle", "/tmp/prj/" ]
+
+WORKDIR /tmp/prj
+RUN sh -c "source $HOME/.sdkman/bin/sdkman-init.sh && ./gradlew --no-daemon clean build jpackage"
+RUN ls build/jpackage

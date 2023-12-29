@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="borderPane" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="biz.nellemann.jsshd.MainController">
+<BorderPane fx:id="borderPane" xmlns="http://javafx.com/javafx/17.0.9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="biz.nellemann.jsshd.MainController" prefWidth="800" prefHeight="360">
 
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -26,7 +26,7 @@
             </BorderPane.margin>
             <Label text="Configuration">
                 <font>
-                    <Font name="System Bold" size="13.0" />
+                    <Font name="System Bold" size="15.0"/>
                 </font>
             </Label>
 
@@ -68,7 +68,7 @@
                     </HBox.margin>
                 </Label>
                 <VBox spacing="5.0">
-                    <Label fx:id="labelHomeDirectory" text="No path selected." />
+                    <Label fx:id="labelHomeDirectory" text="No path selected." maxWidth="200"/>
                     <Button mnemonicParsing="false" onAction="#onSelectButtonClick" text="Select">
                         <graphic>
                             <FontIcon iconLiteral="far-folder-open" />

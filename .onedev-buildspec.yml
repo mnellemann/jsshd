@@ -1,0 +1,62 @@
+version: 38
+jobs:
+- name: gradle ci
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !GenerateChecksumStep
+    name: generate gradle checksum
+    files: '**/build.gradle **/build.gradle.kts'
+    targetFile: checksum
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetupCacheStep
+    name: set up gradle cache
+    key: gradle_@file:checksum@
+    loadKeys:
+    - gradle
+    paths:
+    - /home/gradle/.gradle/caches
+    - /home/gradle/.gradle/jdks
+    - /home/gradle/.gradle/native
+    - /home/gradle/.gradle/wrapper
+    uploadStrategy: UPLOAD_IF_NOT_HIT
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: detect build version
+    runInContainer: true
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        echo "Detecting project version (may require some time while downloading gradle dependencies)..."
+        echo $(gradle properties | grep ^version: | grep -v unspecified | cut -c10-) > buildVersion
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetBuildVersionStep
+    name: set build version
+    buildVersion: '@file:buildVersion@'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run test
+    runInContainer: true
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        gradle test
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishJUnitReportStep
+    name: publish unit test report
+    reportName: Unit Test
+    filePatterns: '**/TEST-*.xml'
+    condition: ALWAYS
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !PullRequestUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400

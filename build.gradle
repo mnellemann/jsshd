@@ -3,10 +3,10 @@ plugins {
     id 'groovy'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.google.osdetector' version '1.7.3'
-    id 'org.beryx.runtime' version '1.13.0'
+    id 'org.beryx.runtime' version '1.13.1'
 }
 
 repositories {
@@ -23,24 +23,24 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
     modularity.inferModulePath.set(false)
 }
 
 javafx {
-    version = '17.0.9'
+    version = '21+'
     modules = [ 'javafx.base', 'javafx.controls', 'javafx.fxml' ]
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
-    implementation 'org.apache.sshd:sshd-core:2.11.0'
-    implementation 'org.apache.sshd:sshd-sftp:2.11.0'
+    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
+    implementation 'org.apache.sshd:sshd-core:2.14.0'
+    implementation 'org.apache.sshd:sshd-sftp:2.14.0'
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-fontawesome5-pack:12.3.1'
     implementation 'io.github.mkpaz:atlantafx-base:2.0.1'

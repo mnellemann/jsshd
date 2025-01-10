@@ -1,6 +1,6 @@
 # Cross-platform graphical SSH File Server
 
-![screenshot](doc/jftpd-screenshot.png)
+![screenshot](doc/jsshd.png)
 
 This is simple cross-platform desktop GUI application embedding the Apache MINA ftpserver, which allows you to easily run an ftp-server in the foreground.
 

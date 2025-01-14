@@ -1,204 +1,221 @@
 version: 38
 jobs:
-  - name: Test
-    steps:
-      - !CheckoutStep
-        name: checkout code
-        cloneCredential: !DefaultCredential {}
-        withLfs: false
-        withSubmodules: false
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !CommandStep
-        name: run test
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            gradlew.bat test
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !PublishJUnitReportStep
-        name: publish unit test report
-        reportName: Unit Test
-        filePatterns: '**/TEST-*.xml'
-        condition: ALWAYS
-    triggers:
-      - !BranchUpdateTrigger {}
-      - !PullRequestUpdateTrigger {}
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Build - Windows
-    jobExecutor: Windows
-    steps:
-      - !CheckoutStep
-        name: checkout code
-        cloneCredential: !DefaultCredential {}
-        withLfs: false
-        withSubmodules: false
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !CommandStep
-        name: run build
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            gradlew.bat build jpackage
-            timeout 60
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !PublishArtifactStep
-        name: store artifacts
-        sourcePath: build\jpackage\
-        artifacts: '*.msi'
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Test
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Build - MacOS
-    jobExecutor: MacOS
-    steps:
-      - !CheckoutStep
-        name: checkout code
-        cloneCredential: !DefaultCredential {}
-        withLfs: false
-        withSubmodules: false
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !CommandStep
-        name: run build
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            ./gradlew build jpackage
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !PublishArtifactStep
-        name: store artifacts
-        sourcePath: build/jpackage/
-        artifacts: '*.dmg'
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Test
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Deploy - Windows
-    jobExecutor: Windows
-    steps:
-      - !CommandStep
-        name: publish artifact
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            dir *
-            for %%a in (*.msi) do set FILE=%%a
-            curl --upload-file %FILE% http://192.168.8.254/artifacts/
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Build - Windows
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Deploy - MacOS
-    jobExecutor: MacOS
-    steps:
-      - !CommandStep
-        name: publish artifact
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            ls *
-            curl --upload-file *.dmg http://192.168.8.254/artifacts/
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Build - MacOS
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Build - Linux
-    jobExecutor: Linux
-    steps:
-      - !CheckoutStep
-        name: checkout code
-        cloneCredential: !DefaultCredential {}
-        withLfs: false
-        withSubmodules: false
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !CommandStep
-        name: run build
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            export JAVA_HOME="/home/build/.sdkman/candidates/java/21.0.5.fx-librca"
-            export PATH="$JAVA_HOME/bin:$PATH"
-            ./gradlew build jpackage
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-      - !PublishArtifactStep
-        name: store artifacts
-        sourcePath: build/jpackage/
-        artifacts: '*.*'
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Test
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
-  - name: Deploy - Linux
-    jobExecutor: Linux
-    steps:
-      - !CommandStep
-        name: publish artifact
-        runInContainer: false
-        image: gradle
-        interpreter: !DefaultInterpreter
-          commands: |
-            ls *
-            curl --upload-file *.deb http://192.168.8.254/artifacts/
-            curl --upload-file *.rpm http://192.168.8.254/artifacts/
-        useTTY: true
-        condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
-    triggers:
-      - !TagCreateTrigger {}
-    jobDependencies:
-      - jobName: Build - Linux
-        requireSuccessful: true
-        artifacts: '**'
-    retryCondition: never
-    maxRetries: 3
-    retryDelay: 30
-    timeout: 14400
+- name: Test
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run test
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        gradlew.bat test
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishJUnitReportStep
+    name: publish unit test report
+    reportName: Unit Test
+    filePatterns: '**/TEST-*.xml'
+    condition: ALWAYS
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !PullRequestUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Build - Windows
+  jobExecutor: Windows
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run build
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        gradlew.bat build jpackage
+        timeout 60
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: store artifacts
+    sourcePath: build\jpackage\
+    artifacts: '*.msi'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Test
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Build - MacOS
+  jobExecutor: MacOS
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run build
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        ./gradlew build jpackage
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: store artifacts
+    sourcePath: build/jpackage/
+    artifacts: '*.dmg'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Test
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Deploy - Windows
+  jobExecutor: Windows
+  steps:
+  - !CommandStep
+    name: publish artifact
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        dir *
+        for %%a in (*.msi) do set FILE=%%a
+        curl --upload-file %FILE% http://192.168.8.254/artifacts/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Build - Windows
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Deploy - MacOS
+  jobExecutor: MacOS
+  steps:
+  - !CommandStep
+    name: publish artifact
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        ls *
+        curl --upload-file *.dmg http://192.168.8.254/artifacts/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Build - MacOS
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Build - Linux
+  jobExecutor: Linux
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run build
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        export JAVA_HOME="/home/build/.sdkman/candidates/java/21.0.5.fx-librca"
+        export PATH="$JAVA_HOME/bin:$PATH"
+        ./gradlew build jpackage
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishArtifactStep
+    name: store artifacts
+    sourcePath: build/jpackage/
+    artifacts: '*.*'
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Test
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Deploy - Linux
+  jobExecutor: Linux
+  steps:
+  - !CommandStep
+    name: publish artifact
+    runInContainer: false
+    image: gradle
+    interpreter: !DefaultInterpreter
+      commands: |
+        ls *
+        curl --upload-file *.deb http://192.168.8.254/artifacts/
+        curl --upload-file *.rpm http://192.168.8.254/artifacts/
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger {}
+  jobDependencies:
+  - jobName: Build - Linux
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400
+- name: Github
+  jobExecutor: Linux
+  steps:
+  - !PushRepository
+    name: push
+    remoteUrl: https://github.com/mnellemann/jsshd.git
+    passwordSecret: GITHUB-TOKEN
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  jobDependencies:
+  - jobName: Deploy - Linux
+    requireSuccessful: true
+    artifacts: '**'
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 14400

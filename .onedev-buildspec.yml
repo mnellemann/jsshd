@@ -211,10 +211,12 @@ jobs:
     passwordSecret: GITHUB-TOKEN
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !TagCreateTrigger
+    branches: main
   jobDependencies:
-  - jobName: Deploy - Linux
+  - jobName: Test
     requireSuccessful: true
-    artifacts: '**'
   retryCondition: never
   maxRetries: 3
   retryDelay: 30

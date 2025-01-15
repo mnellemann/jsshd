@@ -51,7 +51,7 @@ test {
 }
 
 runtime {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    options = [ '--strip-native-commands', '--strip-debug', '--compress=1', '--no-header-files', '--no-man-pages']
     modules = [
             'java.security.jgss',
             'java.desktop',

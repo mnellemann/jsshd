@@ -16,7 +16,7 @@ jobs:
   - !TagCreateTrigger
     branches: main
   jobDependencies:
-  - jobName: Test
+  - jobName: Test JavaFX App
     requireSuccessful: true
   retryCondition: never
   maxRetries: 3

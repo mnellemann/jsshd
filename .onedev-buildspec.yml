@@ -1,7 +1,7 @@
 version: 38
 imports:
 - projectPath: common/java/gradle-javafx
-  revision: v1
+  revision: main
 jobs:
 - name: Github
   jobExecutor: Linux

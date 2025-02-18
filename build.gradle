@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'java'
     id 'groovy'
@@ -119,4 +121,10 @@ runtime {
 
     }
 
+}
+
+tasks.processResources {
+    filesMatching('**/application.properties') {
+        filter(ReplaceTokens, tokens: [copyright: new Date().toYear().toString(), version: version ?: 'dev' ])
+    }
 }

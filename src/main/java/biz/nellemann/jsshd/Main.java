@@ -3,6 +3,7 @@ package biz.nellemann.jsshd;
 import java.awt.Taskbar;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import atlantafx.base.theme.NordDark;
 import javafx.application.Application;
@@ -39,12 +40,11 @@ public class Main extends javafx.application.Application {
 
         }
 
-        // find more themes in 'atlantafx.base.theme' package
         Application.setUserAgentStylesheet(new NordDark().getUserAgentStylesheet());
-
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
+        fxmlLoader.setResources(ResourceBundle.getBundle("biz.nellemann.jsshd.application"));
         Scene scene = new Scene(fxmlLoader.load());
-        primaryStage.setTitle("Minimal SSH File Server");
+        primaryStage.setTitle("Minimal SSH File Server v" + fxmlLoader.getResources().getString("app.version"));
         primaryStage.setScene(scene);
         primaryStage.show();
 

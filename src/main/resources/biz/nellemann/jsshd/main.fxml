@@ -31,11 +31,18 @@
             <BorderPane.margin>
                 <Insets />
             </BorderPane.margin>
-            <Label text="Configuration">
-                <font>
-                    <Font name="System Bold" size="15.0" />
-                </font>
-            </Label>
+            <HBox>
+                <Label text="jSSHD Version ">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+                <Label text="%app.version">
+                    <font>
+                        <Font name="System Bold" size="15.0" />
+                    </font>
+                </Label>
+            </HBox>
 
             <HBox alignment="CENTER_LEFT" spacing="5.0">
                 <Label minHeight="-Infinity" minWidth="125.0" text="Server Username">

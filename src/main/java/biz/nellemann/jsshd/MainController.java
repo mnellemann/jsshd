@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.ResourceBundle;
 
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
@@ -29,6 +30,8 @@ public class MainController {
     private SshServer sshd;
     private String systemTempDirectory;
 
+    @FXML
+    private ResourceBundle resources;
 
     @FXML
     private BorderPane borderPane;
